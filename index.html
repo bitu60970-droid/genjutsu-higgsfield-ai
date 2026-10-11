@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Genjutsu Higgsfield AI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #111827;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 12px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 12px;
+      background: #22c55e;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .reply {
+      margin-top: 18px;
+      background: #1f2937;
+      border-radius: 12px;
+      padding: 14px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+    h1 {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Genjutsu Higgsfield AI</h1>
+    <p>Private local AI. No API keys. No credits. Unlimited local use.</p>
+
+    <textarea id="prompt" placeholder="Ask your local AI anything..."></textarea>
+    <button onclick="sendPrompt()">Send</button>
+
+    <div id="reply" class="reply">Waiting for prompt...</div>
+  </div>
+
+  <script>
+    async function sendPrompt() {
+      const prompt = document.getElementById('prompt').value.trim();
+      const replyBox = document.getElementById('reply');
+
+      if (!prompt) {
+        replyBox.textContent = 'Please type a prompt first.';
+        return;
+      }
+
+      replyBox.textContent = 'Thinking...';
+
+      try {
+        const res = await fetch('http://localhost:8000/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: prompt
+          })
+        });
+
+        const data = await res.json();
+        replyBox.textContent = data.reply || data.error || 'No response';
+      } catch (err) {
+        replyBox.textContent = 'Connection error: Is the Python backend running?';
+      }
+    }
+  </script>
+</body>
+</html>
